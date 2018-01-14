@@ -1,0 +1,89 @@
+#!/bin/sh
+
+rm /media/data/log/clover_ui.log
+
+set -x
+
+UI=""
+LANGUAGE=""
+REGION=""
+SCRIPTS=""
+
+while [ $# -gt 0 ] ; do
+  case "$1" in
+  --ui) UI="$2"; shift;;
+  --language) LANGUAGE="$2"; shift;;
+  --region) REGION="$2"; shift;;
+  --script-file) SCRIPTS="$SCRIPTS --script-file $2"; shift;;
+  esac
+  shift
+done
+
+if [ -z "$UI" -o -z "$LANGUAGE" -o -z "$REGION" ] ; then
+  exit 1
+fi
+
+bootapp_path=""
+for b in "/var/lib/clover/ui" "/usr/share/ui/$UI"; do
+  if [ -e "$b/init.json" ]; then
+    bootapp_path="$b"
+    break
+  fi
+done
+
+decorative_frames_path=""
+for d in "/var/lib/clover/backgrounds" "/usr/share/backgrounds" ; do
+  if [ -d "$d" ] ; then
+    decorative_frames_path="$d"
+    break
+  fi
+done
+
+if [ -z "$bootapp_path" ] ; then
+  exit 1
+fi
+
+export MALI_NOCLEAR=1
+
+VERSION_PATH="'/etc/issue',"
+for i in /etc/clover/version/*; do
+  VERSION_PATH="$VERSION_PATH '$i',"
+done
+
+if [ -f /usr/share/legal/licenses.lua ] ; then
+  SCRIPTS="$SCRIPTS --script-file /usr/share/legal/licenses.lua"
+fi
+
+if [ -n "$decorative_frames_path" ] ; then
+  DECORATIVE_FRAMES_PATH="DECORATIVE_FRAMES_PATH='$decorative_frames_path'"
+fi
+
+read BUILD_TYPE < /etc/clover/buildtype
+
+case "$BUILD_TYPE" in
+test) REED_DEBUG="REED_DEBUG=false";;
+*) REED_DEBUG="";;
+esac
+
+rm /media/data/log/clover_ui.log
+rm /media/data/log/clover_ui_runtime.log
+
+printf REED_DEBUG: $REED_DEBUG \n >> /media/data/log/clover_ui.log
+printf BUILD_TYPE: $BUILD_TYPE \n >> /media/data/log/clover_ui.log
+
+MENU_ADDITIONAL_VARS_SCRIPT="/var/cache/clover//menu.vars.lua" 
+cat > "$MENU_ADDITIONAL_VARS_SCRIPT" <<EOF
+VERSION_PATH = { $VERSION_PATH }
+VOLATILE_SUSPENSION_POINTS_PATH='/var/cache/clover//volatile/'
+PERSISTENT_SUSPENSION_POINTS_PATH='/var/lib/clover/profiles/0/'
+$DECORATIVE_FRAMES_PATH
+$REED_DEBUG
+EOF
+SCRIPTS="--script-file $MENU_ADDITIONAL_VARS_SCRIPT $SCRIPTS"
+
+exec taskset > /media/data/log/clover_ui_runtime.log -c 0-1 ReedPlayer-Clover \
+  --language=$LANGUAGE \
+  --region=$REGION \
+  --bootapp=$bootapp_path \
+  --verbose \
+  $SCRIPTS
