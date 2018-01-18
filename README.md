@@ -1,7 +1,10 @@
-# Hakchi-Nintendo-Dev-Kit
-This is the (UNOFFICIAL) Nintendo dev kit developed by Swingflip. 
+![Hakchi-Dev-Kit-Logo](https://i.imgur.com/5lqfcvz.png)
+# Hakchi Development Kit
+This is the Hakchi Development Kit developed by Swingflip for use on Nintendo Mini Super Nintendo. 
 ## PLEASE NOTE!
 This modification has nothing to do with Nintendo nor does it change anything to do with the copyright/legal stuff they have put in place. This mod is to help you develop apps and modifications and help you debug issues with your console and custom apps. Nothing more!
+
+This mod is also USB-HOST only!!! This is due to the potential size of log files that are generated.
 
 ### What does it do?
 
@@ -31,19 +34,24 @@ The following logs are recorded to /media/data/log/
 
 1. Transfer the nintendo_dev_kit.hmod to your console. (This will mount specific folders to your USB, add configs to your build and do any required ground work)
 2. Once you've installed the hmod and the folders are now mounted to your USB. Transfer all the files from the "Step 2 - Custom Dev Files" to the overmount folders on the usb. (Make sure to selec the right region for your console!)
-These files are: 
-	- Step 2 - Custom Dev Files/REGION/init.d/s81clover-mcp -> /media/hakchi/init.d/s81clover-mcp
-	- Step 2 - Custom Dev Files/REGION/share/applications/clover-ui.menu.desktop -> /media/hakchi/share/applications/clover-ui.menu.desktop
-	- Step 2 - Custom Dev Files/REGION/ui/REGION/resources/defaultscene.scn -> /media/hakchi/ui/REGION/resources/defaultscene.scn (use the correct region file!)
-	- Step 2 - Custom Dev Files/REGION/usr/bin/clover-canoe-shvc -> /media/hakchi/usr/bin/clover-canoe-shvc
-	- Step 2 - Custom Dev Files/REGION/usr/bin/clover-ui -> /media/hakchi/usr/bin/clover-ui
+
+i.e.
+
+copy...
+
+C:\Dev Kit v1.0 RELEASE\Step 2 - Custom Dev Files\EUROPEAN_SET\etc\init.d\S81clover-mcp 
+
+and replace...
+
+D:\hakchi\etc\init.d\S81clover-mcp (usb)
+
 3. (Optional but recommended) Until we release a standalone GUI option menu. Drag over the Dev Kit Options to your hakchi as you would with any normal rom file. These will install option elements to your clover interface which will enable you to enable and disable certain features.
 
 ### Things to consider...
 
 - If you run strace against the clover_ui application script. You WILL recieve a C8 error when trying to shut down the console with the physical power button. If this is your only option...When the C8 displays on screen, recycle the power button and it will initiate a shutdown. To overcome this issue, you can use my shutdown app located in my hakchi options pack located on my github. You can also disable the clover_ui strace by using the optional option element within your clover interface.
 
-- If you completely bugger up your overmounts and your console doesn't boot. Don't panic! Just delete the offending folder from your USB. (i.e. /media/hakchi/init.d) Next time you boot it will load a fresh version of the folder on to your USB and boot as normal. If it doesn't just delete all the overmount folders in your hakchi folder on the usb and let your console rebuild the mounts from fresh.
+- If you completely bugger up your overmounts and your console doesn't boot. Don't panic! Just delete the offending folder from your USB. (i.e. /media/hakchi/etc/init.d) Next time you boot it will load a fresh version of the folder on to your USB and boot as normal. If it doesn't just delete all the overmount folders in your hakchi folder on the usb and let your console rebuild the mounts from fresh.
 
 - You can't damage your system using this! Just make sure you back up your custom scripts and modifications regularly incase you mess anything up and need to rebuild the overmounts. (I've done this plenty of times!)
 
@@ -55,4 +63,17 @@ I reccomend dropping a uninstall file in your transfer folder with just the word
 
 ### Shout Outs and Credits
 
-WIP
+- DanTheMan827 - Thanks for putting up with my dumbass.
+- CompCom - What a bae.
+- DNA64 (Viral_DNA) - Thanks for the help assembling the hmod!
+- SuperAwesome, Advokaten, QuatroKiller, bslenul and the rest of you guys who helped me test it.
+
+### Planned Updates
+
+I am aware having to copy the custom files in step 2 is a pain. I actually had script to automatically copy them over during preinit however it wasn't 100% reliable. I will revisit this at another stage and make it so it automatically installs the custom files ontop of the overmount in one go. Until then You need to copy and paste the files over the overmount folder for now. Sorry!
+
+### Final Note.
+
+As always, take it as face value. It works fine for me and other people seem to use it ok. If you have any issues then hit me up. If you don't like it then don't use it.
+
+You're welcome world.
