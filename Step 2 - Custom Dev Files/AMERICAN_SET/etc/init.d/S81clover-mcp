@@ -1,0 +1,86 @@
+#!/bin/sh -e
+
+if [ -f "/var/lib/clover/autotest" ] ; then
+	# do not disturb autotesting infra
+	exit 0
+fi
+
+start() {
+	local GUI="debug"
+
+	for config in "/var/lib/clover/ui" "/etc/clover/ui" ; do
+		if [ -f "$config" ] ; then
+			GUI=$(cat "$config")
+			break
+		fi
+	done
+	read BUILD_TYPE < /etc/clover/buildtype
+	case "$BUILD_TYPE" in
+	devel|test) #Technically we might find an older build with dev binaries but until then "downgrading" the console is pretty pointless right now.+
+		rm /media/data/log/kernel_parameters.log
+	    rm /media/data/log/resource_limits.log
+		rm /media/data/log/clover_mcp.log
+		rm /media/data/log/clover_mcp_runtime.log
+		rm /media/data/log/clover_mcp_strace.log
+		rm /media/data/log/clover_ui_strace.log
+		rm /media/data/log/foxconn-ftm-audio-test-log.txt
+		rm /media/data/log/foxconn-ftm-cpu-test-log.txt
+		rm /media/data/log/foxconn-ftm-gpu-test-log.txt
+		sysctl -w kernel.core_pattern='/var/lib/core_%e.%p' 
+		#sysctl -a >> /media/data/log/kernel_parameters.log #this will dump the parameters and cause the mini not to boot. Don't use unless you want to and then comment it back out
+		ulimit -c unlimited #Unlocks full core file size limit
+		ulimit -a >> /media/data/log/resource_limits.log
+		printf "--- Device startup in DEVELOPMENT MODE ---\n" >> /media/data/log/clover_mcp.log
+		/bin/strace -o /media/data/log/clover_mcp_strace.log clover-mcp --gui $GUI --no-daemon --quiet-children &>/media/data/log/clover_mcp_runtime.log &
+		;;
+	*) 
+		#This runs in production env.
+		rm /media/data/log/kernel_parameters.log
+	    rm /media/data/log/resource_limits.log
+		rm /media/data/log/clover_mcp.log
+		rm /media/data/log/clover_mcp_runtime.log
+		rm /media/data/log/clover_mcp_strace.log
+		rm /media/data/log/clover_ui_strace.log
+		rm /media/data/log/foxconn-ftm-audio-test-log.txt
+		rm /media/data/log/foxconn-ftm-cpu-test-log.txt
+		rm /media/data/log/foxconn-ftm-gpu-test-log.txt
+		sysctl -w kernel.core_pattern='/var/lib/core_%e.%p'
+		#sysctl -a >> /media/data/log/kernel_parameters.log #this will dump the parameters and cause the mini not to boot. Don't use unless you want to and then comment it back out
+		ulimit -c unlimited #Unlocks full core file size limit
+		ulimit -a >> /media/data/log/resource_limits.log
+		printf "--- Device startup in DEV KIT MODE ---\n" >> /media/data/log/clover_mcp.log
+		/bin/strace -o /media/data/log/clover_mcp_strace.log clover-mcp --gui $GUI --no-daemon --quiet-children &>/media/data/log/clover_mcp_runtime.log;; #--no-daemon --quiet-children might be bad but seems to be ok with it.
+	esac
+
+}
+
+stop() {
+	#printf "--- Device shutdown ---\n" >> /media/data/log/clover_mcp.log
+	
+	#Lets dump the foxconn session logs to log for profiling.
+	cp /var/lib/* /media/data/log/ #DON'T make recursive. 
+	
+	#Dump temprature reading for the session
+	#echo "CPU Core Temperature: $(hakchi hwmon)C" >> /media/data/log/Temperature_readings.log
+	
+	#Add in a sleep here?
+		
+	killall clover-mcp #Shove it clover, please stop giving me grief.
+}
+
+case "$1" in
+start)
+	start
+;;
+stop)
+	stop
+;;
+restart)
+	stop
+	start
+;;
+*)
+	echo "clover-mcp: Please use start, stop, or restart."
+	exit 1
+;;
+esac

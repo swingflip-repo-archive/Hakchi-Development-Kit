@@ -1,0 +1,111 @@
+DevKitHmod(){
+  local sfidentifer
+  local path_int
+  local path_bin
+  local path_ui
+  local path_usr
+  local destpath
+  
+  case "$(cat "$mountpoint/etc/clover/boardtype")-$(cat "$mountpoint/etc/clover/REGION")" in
+    dp-nes-EUR_USA)
+      sfidentifer="nes-usa"
+	  path_int="$mountpoint/etc/init.d"
+	  path_bin="$mountpoint/usr/bin"
+      path_ui="$mountpoint/usr/share/clover-ui"
+	  path_usr="$mountpoint/usr/share/applications"
+      ;;
+    dp-hvc-JPN)
+      sfidentifer="nes-jpn"
+      path_int="$mountpoint/etc/init.d"
+	  path_bin="$mountpoint/usr/bin"
+      path_ui="$mountpoint/usr/share/clover-ui"
+	  path_usr="$mountpoint/usr/share/applications"
+      ;;
+    dp-shvc-USA)
+      sfidentifer="snes-usa"
+      path_int="$mountpoint/etc/init.d"
+	  path_bin="$mountpoint/usr/bin"
+      path_ui="$mountpoint/usr/share/ui/snes-usa"
+	  path_usr="$mountpoint/usr/share/applications"
+      ;;
+    dp-shvc-EUR)
+      sfidentifer="snes-eur"
+      path_int="$mountpoint/etc/init.d"
+	  path_bin="$mountpoint/usr/bin"
+      path_ui="$mountpoint/usr/share/ui/snes-eur"
+	  path_usr="$mountpoint/usr/share/applications"
+      ;;
+    dp-shvc-JPN)
+      sfidentifer="snes-jpn"
+      path_int="$mountpoint/etc/init.d"
+	  path_bin="$mountpoint/usr/bin"
+      path_ui="$mountpoint/usr/share/ui/shvc"
+	  path_usr="$mountpoint/usr/share/applications"
+      ;;
+  esac
+  if [ -d "$path_ui" ] && [ "$cfg_toggle_dev_kit" != "0" ]; then
+    destpath="$mountpoint/media/hakchi/usr/share/ui/$sfidentifer"
+    if [ ! -d "$destpath" ] && touch "$mountpoint/media/hakchi/"; then
+      mkdir -p "$destpath"
+      copy "$path_ui/" "$destpath/"
+    fi
+	if [ "$cfg_toggle_dev_label" != "0" ]; then
+		[ -d "$destpath" ] && mount_bind "$destpath" "$path_ui"
+	fi
+  fi
+  
+  if [ -d "$path_int" ] && [ "$cfg_toggle_dev_kit" != "0" ]; then
+    destpath="$mountpoint/media/hakchi/etc/init.d"
+    if [ ! -d "$destpath" ] && touch "$mountpoint/media/hakchi/"; then
+      mkdir -p "$destpath"
+      copy "$path_int/" "$destpath/"
+    fi
+    [ -d "$destpath" ] && mount_bind "$destpath" "$path_int"
+  fi
+  
+  if [ -d "$path_bin" ] && [ "$cfg_toggle_dev_kit" != "0" ]; then
+    destpath="$mountpoint/media/hakchi/usr/bin"
+    if [ ! -d "$destpath" ] && touch "$mountpoint/media/hakchi/"; then
+      mkdir -p "$destpath"
+      copy "$path_bin/" "$destpath/"
+    fi
+    [ -d "$destpath" ] && mount_bind "$destpath" "$path_bin"
+  fi
+  
+  if [ -d "$path_usr" ] && [ "$cfg_toggle_dev_kit" != "0" ]; then
+    destpath="$mountpoint/media/hakchi/usr/share/applications"
+    if [ ! -d "$destpath" ] && touch "$mountpoint/media/hakchi/"; then
+      mkdir -p "$destpath"
+      copy "$path_usr/" "$destpath/"
+    fi
+    [ -d "$destpath" ] && mount_bind "$destpath" "$path_usr"
+  fi
+  
+  if [ -f "$rootfs/bin/strace" ]; then
+	chmod +x $rootfs/bin/strace
+  fi
+  
+  if [ ! -d "$mountpoint/media/data/log" ]; then
+	mkdir -p "$mountpoint/media/data/log"
+  fi
+  
+  if [ -f "$rootfs/p8099_dev_kit" ]; then
+	rm -f $rootfs/p8099_dev_kit
+  fi
+  
+  if [ -f "$rootfs/b8099_dev_kit" ]; then
+	rm -f $rootfs/b8099_dev_kit
+  fi
+  
+  #Haven't got write permissions or the files are already in use so fuck this for now. I will revisit at some point
+  #if [ -d "$rootfs/tmp/snes-eur" ]; then
+	#killall clover-mcp #fuck off
+	#cp -f $rootfs/tmp/$sfidentifer/init.d/s81clover-mcp $mountpoint/media/hakchi/etc/init.d/
+	#cp -f $rootfs/tmp/$sfidentifer/share/applications/clover-ui.menu.desktop $mountpoint/media/hakchi/usr/share/applications/
+	#cp -f $rootfs/tmp/$sfidentifer/ui/$sfidentifer/resources/defaultscene.scn $mountpoint/media/hakchi/usr/share/ui/$sfidentifer/
+	#cp -f $rootfs/tmp/usr/bin/* $mountpoint/media/hakchi/usr/bin/
+	#echo "Custom Dev kit files installed successfully!" >> $mountpoint/media/hakchi/data/log/dev_kit_install.log
+	#rm -fr $rootfs/tmp
+	#reboot
+  #fi
+}

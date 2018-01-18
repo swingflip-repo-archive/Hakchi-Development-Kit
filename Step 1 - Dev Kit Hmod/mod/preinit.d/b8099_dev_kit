@@ -1,0 +1,86 @@
+DevKitHmod(){
+  local uipath_int
+  local uipath_bin
+  local uipath_ui
+  local uipath_app
+  local destuipath
+  
+  case "$(cat "$mountpoint/etc/clover/boardtype")-$(cat "$mountpoint/etc/clover/REGION")" in
+    dp-nes-EUR_USA)
+      sfidentifer="nes-usa"
+	  uipath_int="$mountpoint/etc/init.d"
+	  uipath_bin="$mountpoint/usr/bin"
+      uipath_ui="$mountpoint/usr/share/clover-ui"
+	  uipath_app="$mountpoint/usr/share/applications"
+      ;;
+    dp-hvc-JPN)
+      sfidentifer="nes-jpn"
+      uipath_int="$mountpoint/etc/init.d"
+	  uipath_bin="$mountpoint/usr/bin"
+      uipath_ui="$mountpoint/usr/share/clover-ui"
+	  uipath_app="$mountpoint/usr/share/applications"
+      ;;
+    dp-shvc-USA)
+      sfidentifer="snes-usa"
+      uipath_int="$mountpoint/etc/init.d"
+	  uipath_bin="$mountpoint/usr/bin"
+      uipath_ui="$mountpoint/usr/share/ui/snes-usa"
+	  uipath_app="$mountpoint/usr/share/applications"
+      ;;
+    dp-shvc-EUR)
+      sfidentifer="snes-eur"
+      uipath_int="$mountpoint/etc/init.d"
+	  uipath_bin="$mountpoint/usr/bin"
+      uipath_ui="$mountpoint/usr/share/ui/snes-eur"
+	  uipath_app="$mountpoint/usr/share/applications"
+      ;;
+    dp-shvc-JPN)
+      sfidentifer="snes-jpn"
+      uipath_int="$mountpoint/etc/init.d"
+	  uipath_bin="$mountpoint/usr/bin"
+      uipath_ui="$mountpoint/usr/share/ui/shvc"
+	  uipath_app="$mountpoint/usr/share/applications"
+      ;;
+  esac
+
+  if [ -d "$uipath_int" ]; then
+    destuipath="$mountpoint/media/hakchi/init.d/"
+	if [ ! -d "$destuipath" ] && touch "$mountpoint/media/hakchi/" && $cfg_toggle_dev_kit != "0"; then
+      mkdir -p "$destuipath"
+      cp -r $uipath_int/* "$destuipath/"
+	else
+	  [ -d "$destuipath" ] && mount_bind "$destuipath" "$uipath_int"
+    fi
+  fi
+  if [ -d "$uipath_bin" ]; then
+	destuipath="$mountpoint/media/hakchi/usr/bin/"
+	if [ ! -d "$destuipath" ] && touch "$mountpoint/media/hakchi/" && $cfg_toggle_dev_kit != "0"; then
+      mkdir -p "$destuipath"
+      cp -r $uipath_bin/* "$destuipath/"
+	else
+	  [ -d "$destuipath" ] && mount_bind "$destuipath" "$uipath_bin"
+    fi
+  fi
+  if [ -d "$uipath_ui" ]; then
+	destuipath="$mountpoint/media/hakchi/ui/$sfidentifer"
+	if [ ! -d "$destuipath" ] && touch "$mountpoint/media/hakchi/" && $cfg_toggle_dev_kit != "0"; then
+      mkdir -p "$destuipath"
+      cp -r $uipath_ui/* "$destuipath/"
+	else
+	  if [ $cfg_toggle_dev_label != "0" ]; then
+	    [ -d "$destuipath" ] && mount_bind "$destuipath" "$uipath_ui"
+	  else
+	    umount "$destuipath"
+	  fi
+    fi
+  fi
+  if [ -d "$uipath_app" ]; then
+	destuipath="$mountpoint/media/hakchi/share/applications"
+	if [ ! -d "$destuipath" ] && touch "$mountpoint/media/hakchi/" && $cfg_toggle_dev_kit != "0"; then
+      mkdir -p "$destuipath"
+      cp -r $uipath_app/* "$destuipath/"
+	else
+	  [ -d "$destuipath" ] && mount_bind "$destuipath" "$uipath_app"
+    fi
+  fi  
+}

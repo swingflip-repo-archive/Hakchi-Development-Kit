@@ -1,0 +1,18 @@
+[Desktop Entry]
+Type=Application
+Exec=/bin/sh /usr/share/games/CLV-Z-DEVTOGGLESTRACE/dev_toggle_clover_strace.sh
+Path=/var/lib/clover/profiles/0/CLV-Z-DEVTOGGLESTRACE
+Name=Dev Kit - Toggle STRACE on Clover UI
+Icon=/usr/share/games/CLV-Z-DEVTOGGLESTRACE/CLV-Z-DEVTOGGLESTRACE.png
+
+[X-CLOVER Game]
+Code=CLV-Z-DEVTOGGLESTRACE
+TestID=777
+ID=0
+Players=1
+Simultaneous=0
+ReleaseDate=2018-01-01
+SaveCount=0
+SortRawTitle=00Devtogglestrace
+SortRawPublisher=SWINGFLIP
+Copyright=hakchi2 ©2018 Ryan 'Swingflip' Hamlin

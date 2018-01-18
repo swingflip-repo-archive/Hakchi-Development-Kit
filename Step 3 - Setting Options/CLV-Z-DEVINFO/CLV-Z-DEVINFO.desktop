@@ -1,0 +1,18 @@
+[Desktop Entry]
+Type=Application
+Exec=/bin/sh /usr/share/games/CLV-Z-DEVINFO/dev_info.sh
+Path=/var/lib/clover/profiles/0/CLV-Z-DEVINFO
+Name=Dev Kit - Info and About
+Icon=/usr/share/games/CLV-Z-DEVINFO/CLV-Z-DEVINFO.png
+
+[X-CLOVER Game]
+Code=CLV-Z-DEVINFO
+TestID=777
+ID=0
+Players=1
+Simultaneous=0
+ReleaseDate=2018-01-01
+SaveCount=0
+SortRawTitle=00Devinfoandabout
+SortRawPublisher=SWINGFLIP
+Copyright=hakchi2 ©2018 Ryan 'Swingflip' Hamlin

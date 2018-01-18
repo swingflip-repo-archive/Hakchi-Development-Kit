@@ -1,4 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=Clover UI Menu
-Exec=/media/bin/strace -o /media/data/log/clover_ui_strace.log /usr/bin/clover-ui

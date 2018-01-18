@@ -1,0 +1,5 @@
+unset cfg_toggle_strace_clover_ui
+unset cfg_toggle_dev_label
+unset cfg_toggle_dev_kit
+
+rm -f "$rootfs/bin/strace"
