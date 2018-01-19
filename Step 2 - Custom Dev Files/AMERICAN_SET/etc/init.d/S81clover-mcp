@@ -17,15 +17,15 @@ start() {
 	read BUILD_TYPE < /etc/clover/buildtype
 	case "$BUILD_TYPE" in
 	devel|test) #Technically we might find an older build with dev binaries but until then "downgrading" the console is pretty pointless right now.+
-		rm /media/data/log/kernel_parameters.log
-	    rm /media/data/log/resource_limits.log
-		rm /media/data/log/clover_mcp.log
-		rm /media/data/log/clover_mcp_runtime.log
-		rm /media/data/log/clover_mcp_strace.log
-		rm /media/data/log/clover_ui_strace.log
-		rm /media/data/log/foxconn-ftm-audio-test-log.txt
-		rm /media/data/log/foxconn-ftm-cpu-test-log.txt
-		rm /media/data/log/foxconn-ftm-gpu-test-log.txt
+		rm -f /media/data/log/kernel_parameters.log
+	    rm -f /media/data/log/resource_limits.log
+		rm -f /media/data/log/clover_mcp.log
+		rm -f /media/data/log/clover_mcp_runtime.log
+		rm -f /media/data/log/clover_mcp_strace.log
+		rm -f /media/data/log/clover_ui_strace.log
+		rm -f /media/data/log/foxconn-ftm-audio-test-log.txt
+		rm -f /media/data/log/foxconn-ftm-cpu-test-log.txt
+		rm -f /media/data/log/foxconn-ftm-gpu-test-log.txt
 		sysctl -w kernel.core_pattern='/var/lib/core_%e.%p' 
 		#sysctl -a >> /media/data/log/kernel_parameters.log #this will dump the parameters and cause the mini not to boot. Don't use unless you want to and then comment it back out
 		ulimit -c unlimited #Unlocks full core file size limit
@@ -35,15 +35,15 @@ start() {
 		;;
 	*) 
 		#This runs in production env.
-		rm /media/data/log/kernel_parameters.log
-	    rm /media/data/log/resource_limits.log
-		rm /media/data/log/clover_mcp.log
-		rm /media/data/log/clover_mcp_runtime.log
-		rm /media/data/log/clover_mcp_strace.log
-		rm /media/data/log/clover_ui_strace.log
-		rm /media/data/log/foxconn-ftm-audio-test-log.txt
-		rm /media/data/log/foxconn-ftm-cpu-test-log.txt
-		rm /media/data/log/foxconn-ftm-gpu-test-log.txt
+		rm -f /media/data/log/kernel_parameters.log
+	    rm -f /media/data/log/resource_limits.log
+		rm -f /media/data/log/clover_mcp.log
+		rm -f /media/data/log/clover_mcp_runtime.log
+		rm -f /media/data/log/clover_mcp_strace.log
+		rm -f /media/data/log/clover_ui_strace.log
+		rm -f /media/data/log/foxconn-ftm-audio-test-log.txt
+		rm -f /media/data/log/foxconn-ftm-cpu-test-log.txt
+		rm -f /media/data/log/foxconn-ftm-gpu-test-log.txt
 		sysctl -w kernel.core_pattern='/var/lib/core_%e.%p'
 		#sysctl -a >> /media/data/log/kernel_parameters.log #this will dump the parameters and cause the mini not to boot. Don't use unless you want to and then comment it back out
 		ulimit -c unlimited #Unlocks full core file size limit
